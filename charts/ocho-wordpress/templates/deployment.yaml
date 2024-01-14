@@ -1,0 +1,125 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ocho-wordpress.fullname" . }}
+  labels:
+    {{- include "ocho-wordpress.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "ocho-wordpress.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "ocho-wordpress.labels" . | nindent 8 }}
+	{{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      shareProcessNamespace: true
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "ocho-wordpress.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: http
+          env:
+            - name: PORT
+              value: {{ .Values.service.port | quote }}
+            - name: DOCUMENT_ROOT
+              value: "/app/web"
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.httpd.image.repository }}:{{ .Values.httpd.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.httpd.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /-/nginx-status
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /-/nginx-status
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+        - name: php
+          env:
+            - name: PHP_ACCESS_LOG
+              value: "/dev/null"
+            - name: PORT
+              value: "80"
+            - name: WP_HOME
+              value: {{ .Values.wordpress.url }}
+            - name: WP_SITEURL
+              value: {{ .Values.wordpress.url }}/wp
+            - name: DB_HOST
+              value: mariadb.ocho-svc.svc.cluster.local
+            - name: DB_USER
+              value : {{ include "ocho-wordpress.fullname" . }}
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key:  password
+                  name: {{ include "ocho-wordpress.fullname" . }}-mariadb
+            - name: DB_NAME
+              value: {{ include "ocho-wordpress.fullname" . }}
+            - name: SMTP_HOST
+              value: ocho-svc-mailpit-smtp.ocho-svc.svc.cluster.local
+            - name: SMTP_PORT
+              value: "25"
+            - name: SMTP_TLS
+              value: "off"
+            - name: SMTP_STARTTLS
+              value: "off"
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.php.image.repository }}:{{ .Values.php.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.php.image.pullPolicy }}
+          livenessProbe:
+            httpGet:
+              path: /-/php-status
+              port: 8080
+          readinessProbe:
+            httpGet:
+              path: /-/php-status
+              port: 8080
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with  .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

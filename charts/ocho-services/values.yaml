@@ -1,0 +1,12 @@
+# Default values for ocho-services.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+ingress-nginx:
+  enabled: true
+
+mariadb:
+  enabled: true
+
+mailpit:
+  enabled: true

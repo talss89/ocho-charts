@@ -1,0 +1,1 @@
+Your WordPress instance will be available shortly at {{ .Values.wordpress.url }}

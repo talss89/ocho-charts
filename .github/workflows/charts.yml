@@ -26,6 +26,10 @@ jobs:
 
       - name: Add dependency chart repos
         run: |
+          helm repo add mittwald https://helm.mittwald.de
+          helm repo add jouve https://jouve.github.io/charts
+          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+          helm repo add mariadb-operator https://mariadb-operator.github.io/mariadb-operator
           helm dependency update ./charts/ocho-services
 
       - name: Run chart-releaser

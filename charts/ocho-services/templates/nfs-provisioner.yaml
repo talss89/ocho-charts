@@ -1,3 +1,4 @@
+{{- if .Values.nfs.enabled -}}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -189,3 +190,4 @@ metadata:
 provisioner: ocho.cloud/nfs
 mountOptions:
   - vers=4.1
+  {{- end -}}

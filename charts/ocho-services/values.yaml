@@ -10,3 +10,6 @@ mariadb:
 
 mailpit:
   enabled: true
+
+nfs:
+  enabled: false

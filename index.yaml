@@ -27,4 +27,15 @@ entries:
     urls:
     - https://github.com/talss89/ocho-charts/releases/download/ocho-services-0.0.0/ocho-services-0.0.0.tgz
     version: 0.0.0
-generated: "2024-01-15T00:21:17.562103783Z"
+  ocho-wordpress:
+  - apiVersion: v2
+    appVersion: 0.0.0
+    created: "2024-01-15T00:30:16.07071792Z"
+    description: WordPress on Kubernetes
+    digest: df44143ba80fa9fc575ee7c58e97e8a8d9f87095a1aac126d1776aac9e9a227a
+    name: ocho-wordpress
+    type: application
+    urls:
+    - https://github.com/talss89/ocho-charts/releases/download/ocho-wordpress-0.0.0/ocho-wordpress-0.0.0.tgz
+    version: 0.0.0
+generated: "2024-01-15T00:30:16.070724121Z"

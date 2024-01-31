@@ -5,8 +5,12 @@ metadata:
   namespace: ocho-svc
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+      - mailpit.{{ .Values.tld }}
+      secretName: ocho-local-tls
   rules:
-  - host: mailpit.svc.ocho
+  - host: mailpit.{{ .Values.tld }}
     http:
       paths:
       - pathType: Prefix

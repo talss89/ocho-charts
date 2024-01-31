@@ -3,6 +3,32 @@ entries:
   ocho-services:
   - apiVersion: v2
     appVersion: 0.0.0
+    created: "2024-01-31T18:28:55.940000096Z"
+    dependencies:
+    - name: kubernetes-secret-generator
+      repository: https://helm.mittwald.de
+      version: ~3.4.0
+    - condition: ingress-nginx.enabled
+      name: ingress-nginx
+      repository: https://kubernetes.github.io/ingress-nginx
+      version: 4.8.x
+    - condition: mariadb.enabled
+      name: mariadb-operator
+      repository: https://mariadb-operator.github.io/mariadb-operator
+      version: ~0.24.0
+    - condition: mailpit.enabled
+      name: mailpit
+      repository: https://jouve.github.io/charts/
+      version: ~0.12.0
+    description: Ocho WordPress services
+    digest: 182e9d9724d26128dc4ec91ddeec4a42f5649a1e642b3e562cf351fa672a606f
+    name: ocho-services
+    type: application
+    urls:
+    - https://github.com/talss89/ocho-charts/releases/download/ocho-services-0.0.1/ocho-services-0.0.1.tgz
+    version: 0.0.1
+  - apiVersion: v2
+    appVersion: 0.0.0
     created: "2024-01-15T00:21:17.562093524Z"
     dependencies:
     - name: kubernetes-secret-generator
@@ -30,6 +56,16 @@ entries:
   ocho-wordpress:
   - apiVersion: v2
     appVersion: 0.0.0
+    created: "2024-01-31T18:28:56.119181412Z"
+    description: WordPress on Kubernetes
+    digest: 6bf6865fdcdcb2b375a2d9ba7f557a4404c0275e7f7894cb5e8f5a4321ac385d
+    name: ocho-wordpress
+    type: application
+    urls:
+    - https://github.com/talss89/ocho-charts/releases/download/ocho-wordpress-0.0.1/ocho-wordpress-0.0.1.tgz
+    version: 0.0.1
+  - apiVersion: v2
+    appVersion: 0.0.0
     created: "2024-01-15T00:30:16.07071792Z"
     description: WordPress on Kubernetes
     digest: df44143ba80fa9fc575ee7c58e97e8a8d9f87095a1aac126d1776aac9e9a227a
@@ -38,4 +74,4 @@ entries:
     urls:
     - https://github.com/talss89/ocho-charts/releases/download/ocho-wordpress-0.0.0/ocho-wordpress-0.0.0.tgz
     version: 0.0.0
-generated: "2024-01-15T00:30:16.070724121Z"
+generated: "2024-01-31T18:28:56.119197602Z"

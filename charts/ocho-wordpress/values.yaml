@@ -5,7 +5,8 @@
 replicaCount: 1
 
 wordpress:
-  url: "https://example.ocho"
+  url: "https://example.ocho.test"
+  type: bedrock
   additionalHosts: []
 
 httpd:
@@ -21,6 +22,9 @@ php:
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
+
+tls:
+  secretName: []
 
 imagePullSecrets: []
 nameOverride: ""
@@ -94,14 +98,10 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 # Additional volumes on the output Deployment definition.
-volumes:
-  - name: srv
-    emptyDir: {}
+volumes: []
 
 # Additional volumeMounts on the output Deployment definition.
-volumeMounts:
-  - name: srv
-    mountPath: /srv
+volumeMounts: []
 
 nodeSelector: {}
 

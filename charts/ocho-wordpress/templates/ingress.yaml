@@ -34,7 +34,7 @@ spec:
     {{- range .Values.wordpress.additionalHosts }}
     - {{ . | quote }}
     {{- end }}
-    secretName: {{ $fullName }}-tls
+    secretName: {{ default "ocho-local-tls" .Values.tls.secretName }}
     {{- end }}
   rules:
     - host: {{ (urlParse .Values.wordpress.url).host }}

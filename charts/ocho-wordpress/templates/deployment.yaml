@@ -24,6 +24,17 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
+      initContainers:
+      - name: chown
+        image: busybox:latest
+        command: ["sh","-c","mkdir -p /uploads && chown -R 888:888 /uploads"]
+        resources:
+          limits:
+            cpu: "1"
+            memory: 1Gi
+        volumeMounts:
+          - name: uploads
+            mountPath: /uploads
       shareProcessNamespace: true
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -31,6 +42,7 @@ spec:
       {{- end }}
       serviceAccountName: {{ include "ocho-wordpress.serviceAccountName" . }}
       securityContext:
+        fsGroup: 888
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: http
@@ -57,8 +69,10 @@ spec:
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
           volumeMounts:
+            - mountPath: /srv
+              name: srv
+          {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
         - name: php
@@ -102,14 +116,21 @@ spec:
             httpGet:
               path: /-/php-status
               port: 8080
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
           volumeMounts:
+            - mountPath: /srv
+              name: srv
+            - mountPath: {{ if eq .Values.wordpress.type "bedrock" }} "/app/web/app/uploads" {{- else -}} "/app/web/wp-content" {{- end }} 
+              name: uploads
+          {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
-      {{- with  .Values.volumes }}
       volumes:
+        - name: srv
+          emptyDir: {}
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: {{ include "ocho-wordpress.fullname" . }}-uploads
+      {{- with  .Values.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.nodeSelector }}
